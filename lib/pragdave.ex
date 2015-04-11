@@ -90,6 +90,85 @@ defmodule ListsAndRecursion do
 	defp _span(from, to, list), do: _span(from + 1, to, list ++ [from])
 end
 
+defmodule ListsAndRecursion5to6 do
+	## all?
+
+	def all?([]), do: true
+	def all?([head | tail]), do: head && all?(tail)
+
+	## each
+	
+	def each([], _func), do: :ok
+	def each([head | tail], func) do
+		func.(head)
+		each(tail, func)
+	end
+	
+	## filter
+	
+	def filter([], _pred), do: []
+	def filter([head | tail], pred) do
+		if pred.(head) do
+			[head | filter(tail, pred)]
+		else
+			filter(tail, pred)
+		end
+	end
+	
+	## split
+
+	def split(list, n) when n > 0, do: _split(list, n, [])
+
+	defp _split([], _n, acc), do: acc
+	defp _split(list, n, acc) do
+		_split(drop(list, n), n, acc ++ [take(list, n)])
+	end
+
+	## drop
+
+	def drop([], _), do: []
+	def drop(list, 0), do: list
+	def drop([_head | tail], n) when n >= 0 do
+		drop(tail, n - 1)
+	end
+	
+	## take
+
+	def take(list, n) when n >= 0, do: _take(list, n, [])
+		
+	defp _take([], _n, acc), do: acc
+	defp _take(_list, 0, acc), do: acc
+	defp _take([head | tail], n, acc) do
+		_take(tail, n - 1, acc ++ [head])
+	end
+	
+	## flatten
+
+	def flatten([]), do: []
+	def flatten([head | tail]) when is_list(head) do
+		flatten(head) ++ flatten(tail)
+	end
+	def flatten([head | tail]) do
+		[head] ++ flatten(tail)
+	end
+end
+
+defmodule ListsAndRecursion7 do
+	import ListsAndRecursion
+	
+	# done using sieve approach
+	# FIXME: for the time being, can't come up with a sensible approach using list comprehensions
+	def primes(2), do: [2]
+	def primes(3), do: [2, 3]
+	def primes(n), do: _primes(span(2, n), span(2, div(n, 2)))
+
+	defp _primes(candidates, []), do: candidates
+	defp _primes(candidates, [divisor | divisors]) do
+		_primes(Enum.reject(candidates, &(&1 != divisor and rem(&1, divisor) == 0)), 
+						Enum.reject(divisors, &(rem(&1, divisor) == 0)))
+	end
+end
+
 defmodule MyOwn do
 	def factorial(0), do: 1
 	def factorial(n) when n > 0, do: n * factorial(n - 1)

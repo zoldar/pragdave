@@ -161,6 +161,119 @@ defmodule ListsAndRecursionTest do
 	end
 end
 
+defmodule ListsAndRecursion5to6Test do
+	use ExUnit.Case
+	import ListsAndRecursion5to6
+	
+	## all?
+
+	test "all? for empty enumerable returns true" do
+		assert all?([])
+	end
+	
+	test "all? for all-falsey enumerable returns false" do
+		assert not all?([false, false, nil])
+	end
+	
+	test "all? for truthy enumerable returns true" do
+		assert all?([true, 1, []])
+	end
+	
+	test "all? for mixed enumerable returns false" do
+		assert not all?([true, false, 1])
+	end
+	
+	## each
+	
+	test "each - how the hell do I test a fn with side-effects???" do
+		#each([1, 2, 3, 4, 5], &IO.inspect/1)
+	end
+
+	## filter
+
+	test "filter on empty list returns empty list" do
+		assert filter([], &(&1 * &1)) == []
+	end
+	
+	test "filter of single element, non-conforming list returns empty list" do
+		assert filter([1], &(&1 > 1)) == []
+	end
+	
+	test "filter works on a given set of examples" do
+		assert filter([1, 2, 3, 4, 5], &(&1 > 2)) == [3, 4, 5]
+		assert filter([1, 5, 3, 2, 4], &(&1 > 2)) == [5, 3, 4]
+	end
+	
+	## take
+
+	test "take on empty list returns empty list" do
+		assert take([], 3) == []
+	end
+	
+	test "take on list with size of exact n returns those n elements" do
+		assert take([1, 2, 3], 3) == [1, 2, 3]
+	end
+	
+	test "take on undersized list" do
+		assert take([1, 2], 3) == [1, 2]
+	end
+	
+	test "take on oversized list" do
+		assert take([1, 2, 3, 4, 5], 3) == [1, 2, 3]
+	end
+	
+	## split
+	
+	test "split given an empty collection, returns empty list" do
+		assert split([], 3) == []
+	end
+	
+	test "split, given a collection, returns a valid split" do
+		assert split([1, 2, 3], 3) == [[1, 2, 3]]
+		assert split([1, 2, 3, 4, 5], 3) == [[1, 2, 3], [4, 5]]
+		assert split([1, 2, 3, 4, 5, 6], 3) == [[1, 2, 3], [4, 5, 6]]
+	end
+	
+	## flatten
+
+	test "flatten of empty list returns empty list" do	
+		assert flatten([]) == []
+	end
+	
+	test "flatten of non-nested list returns the list unchanged" do
+		assert flatten([1, 2, 3, 4, 5]) == [1, 2, 3, 4, 5]
+	end
+	
+	test "flatten of list with a sublist in the middle" do
+		assert flatten([1, 2, [3, 4], 5]) == [1, 2, 3, 4, 5]
+	end
+	
+	test "flatten of deeply nested list" do
+		assert flatten([1, [2, 3, [4]], 5, [[[6]]]]) == [1, 2, 3, 4, 5, 6]
+	end
+end
+
+defmodule ListsAndRecursion7Test do
+	use ExUnit.Case
+	import ListsAndRecursion7
+	
+	test "primes on 2 returns single element list" do
+		assert primes(2) == [2]
+	end
+	
+	test "primes returns expected results" do
+		assert primes(3) == [2, 3]
+		assert primes(4) == [2, 3]
+		assert primes(5) == [2, 3, 5]
+		assert primes(6) == [2, 3, 5]
+		assert primes(7) == [2, 3, 5, 7]
+		assert primes(8) == [2, 3, 5, 7]
+		assert primes(9) == [2, 3, 5, 7]
+		assert primes(10) == [2, 3, 5, 7]
+		assert primes(11) == [2, 3, 5, 7, 11]
+	end
+end
+
 defmodule MyOwnTest do
 	use ExUnit.Case
 	
