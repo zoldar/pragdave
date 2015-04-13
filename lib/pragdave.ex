@@ -156,16 +156,28 @@ end
 defmodule ListsAndRecursion7 do
 	import ListsAndRecursion
 	
-	# done using sieve approach
-	# FIXME: for the time being, can't come up with a sensible approach using list comprehensions
-	def primes(2), do: [2]
-	def primes(3), do: [2, 3]
-	def primes(n), do: _primes(span(2, n), span(2, div(n, 2)))
+	def primes(n) do
+		numbers = span(2, n)
+		multiples = for x <- numbers, y <- numbers, x >= y, x*y <= n, do: x * y
+		numbers -- multiples 
+	end
+end
 
-	defp _primes(candidates, []), do: candidates
-	defp _primes(candidates, [divisor | divisors]) do
-		_primes(Enum.reject(candidates, &(&1 != divisor and rem(&1, divisor) == 0)), 
-						Enum.reject(divisors, &(rem(&1, divisor) == 0)))
+defmodule ListsAndRecursion8 do
+	def apply_tax(orders, rates) do
+		Enum.reverse(Enum.reduce(orders, [], &(_tax_order(rates, &1, &2))))
+	end
+
+	defp _calculate_tax(rates, order) do
+		if rates[order[:ship_to]] do
+			Float.round((1 + rates[order[:ship_to]]) * order[:net_amount], 2)
+		else
+			order[:net_amount]
+		end
+	end
+
+	defp _tax_order(rates, order, taxed_orders) do
+		[(order ++ [total_amount: _calculate_tax(rates, order)]) | taxed_orders]
 	end
 end
 
